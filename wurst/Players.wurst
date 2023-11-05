@@ -1,0 +1,12 @@
+package Players
+
+import HashSet
+
+public constant wavePlayers = new HashSet<player>()..add(players[23], players[22], players[21], players[20])
+
+var ii = 23
+public function nextWavePlayer() returns player
+    ii += 1
+    if ii > 23
+        ii = 20
+    return players[ii]

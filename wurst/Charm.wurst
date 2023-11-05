@@ -1,0 +1,9 @@
+package Charm
+
+import AbilityIds
+import ClosureEvents
+
+
+init
+    EventListener.onCast(AbilityIds.charm) _ ->
+        EventData.getSpellTargetUnit().setPathing(false)

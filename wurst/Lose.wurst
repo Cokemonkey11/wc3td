@@ -1,0 +1,24 @@
+package Lose
+
+import ClosureTimers
+
+import Players
+import PlayerUnits
+
+
+init
+    nullTimer() ->
+        let lossRegion = CreateRegion()
+        lossRegion.addRect(Rect(-512., -2048., 512., -1472.))
+        CreateTrigger()..registerEnterRegion(lossRegion, Filter(() -> begin
+            let fu = GetFilterUnit()
+            if wavePlayers.has(fu.getOwner())
+                if fu.getTypeId() == ID_REFEREE
+                    fu..setPos(players[23].getStartLocation())..issuePointOrder("move", vec2(0., -1790.))
+                else
+                    print("You lose! ".color(COLOR_GOLD) + "The game will end in 10 seconds.")
+                    doAfter(10.) ->
+                        EndGame(true)
+
+            return false
+        end))

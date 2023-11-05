@@ -1,0 +1,154 @@
+package Spawns
+
+import AbilityIds
+import Board
+import ClosureTimers
+import HashMap
+import HashSet
+import LinkedList
+
+
+import WurstRealHeapGuard
+
+import CreepUnits
+import Players
+import PlayerUnits
+
+
+constant units = new HashSet<int>()
+constant unitsToSpawn = new LinkedList<int>()
+constant unitHps = new HashMap<int, int>
+constant unitNames = new HashMap<int, string>()
+constant unitDefenseTypes = new HashMap<int, int>()
+constant unitMovementTypes = new HashMap<int, int>()
+public var lockForWinning = true
+
+
+function spawnCandidate() returns unit
+    while not moddedUnits.isEmpty()
+        let newTypeId = moddedUnits.pop()
+        let sample = createUnit(players[23], newTypeId)
+
+        if (
+            sample.isType(UNIT_TYPE_STRUCTURE)
+            or sample.getMoveSpeed() < 1
+            or sample.hasAbility(AbilityIds.permanentInvisibility)
+            or sample.isInvulnerable()
+            or sample.isType(UNIT_TYPE_ETHEREAL)
+            or BlzGetUnitIntegerField(sample, UNIT_IF_MOVE_TYPE) == 16 // MOVE_TYPE_FLOAT
+        )
+            sample.remove()
+        else
+            return sample
+    return null
+
+
+public function preSpawn()
+    let total = moddedUnits.size()
+    doPeriodically(1. / 10.) (CallbackPeriodic cb) ->
+        var wasNull = false
+        for _ = 0 to 5
+            let u = spawnCandidate()
+
+            if u == null
+                wasNull = true
+                break
+
+            let typ = u.getTypeId()
+
+            if units.has(typ)
+                u.remove()
+            else
+                units.add(typ)
+                unitHps.put(typ, u.getHP().toInt())
+                unitNames.put(typ, u.getName())
+                unitDefenseTypes.put(typ, BlzGetUnitIntegerField(u, UNIT_IF_DEFENSE_TYPE))
+                unitMovementTypes.put(typ, BlzGetUnitIntegerField(u, UNIT_IF_MOVE_TYPE))
+                u.remove()
+                ClearTextMessages()
+                let progress = (total - moddedUnits.size()) / total
+                print("Preloading... " + (100 * progress).toInt().toString() + "%")
+                break
+
+        if wasNull
+            destroy cb
+            new RealHeapGuard<int>() guard ->
+                for u in units
+                    guard.push(unitHps.get(u).toReal(), u)
+
+                while true
+                    let res = guard.pop()
+                    if not res == 0
+                        unitsToSpawn.addtoStart(res)
+                    else
+                        break
+
+            startSpawning()
+
+function startSpawning()
+    ClearTextMessages()
+    print("Warcraft 3 TD".color(COLOR_GOLD))
+    let board = new Board("Warcraft 3 TD", 0.25)
+    board.columns(asList(new BoardColumn("Rounds left", 0.35), new BoardColumn("Current round", 0.45), new BoardColumn("Info", 0.2)))
+    let approxTotalRounds = 573
+    let roundsLeft = dynamicCell<int>(approxTotalRounds, i -> i.toString())
+    let currentRound = dynamicCell<string>("", i -> i)
+    let currentNotes = dynamicCell<string>("", i -> i)
+
+    board.addRow()..addDynamic(roundsLeft)..addDynamic(currentRound)..addDynamic(currentNotes)
+    board.show()
+    createUnit(players[23], ID_REFEREE, players[23].getStartLocation())
+        ..issuePointOrder("move", vec2(0., -1790.))
+        ..setVertexColor(colorA(0, 0, 0, 100))
+        ..addAbility(AbilityIds.invulnerable)
+
+    doPeriodically(4.) (CallbackPeriodic cb) ->
+        if not unitsToSpawn.isEmpty()
+            let next = unitsToSpawn.dequeue()
+            let unitHp = unitHps.get(next)
+            let desiredHp = (approxTotalRounds - unitsToSpawn.size()) * 4 // 4, 8, ..., 2280
+            let currentDefenseType = ConvertDefenseType(unitDefenseTypes.get(next))
+            let currentMovementType = ConvertMoveType(unitMovementTypes.get(next))
+            let spawnCountPerPlayer = (
+                currentDefenseType == DEFENSE_TYPE_DIVINE
+                ? 1
+                : (
+                    currentMovementType == MOVE_TYPE_FLY
+                    ? 1
+                    : (
+                        max(1, (desiredHp / unitHp).toInt())
+                    )
+                )
+            )
+
+            var playerCount = 0
+            for i = 0 to 4
+                if players[i].isIngame()
+                    playerCount += 1
+
+            doPeriodicallyCounted(0.5, spawnCountPerPlayer) (CallbackCounted cbOuter) ->
+                doPeriodicallyCounted(0.1, playerCount) (CallbackCounted cb) ->
+                    createUnit(nextWavePlayer(), next)
+                        ..setPos(players[23].getStartLocation())
+                        ..issuePointOrder("move", vec2(0., -1790.))
+                        ..setColor(PLAYER_COLOR_PEANUT)
+
+            roundsLeft.updateValue(unitsToSpawn.size())
+            currentRound.updateValue(unitNames.get(next))
+
+            let notes = (
+                currentDefenseType == DEFENSE_TYPE_DIVINE
+                ? "Divine armor"
+                : (
+                    currentMovementType == MOVE_TYPE_FLY
+                    ? "Flying"
+                    : "x" + (
+                        playerCount * spawnCountPerPlayer
+                    ).toString()
+                )
+            )
+            currentNotes.updateValue(notes)
+
+        else
+            lockForWinning = false
+            destroy cb

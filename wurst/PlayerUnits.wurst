@@ -1,0 +1,838 @@
+package PlayerUnits
+
+import AbilityObjEditing
+import HashMap
+import Icons
+import ItemIds
+import ObjectIds
+import Units
+import UnitIds
+
+
+// w3a
+
+public constant ID_MAGIC_SENTRY = 'Ax00'
+public constant ID_FRAGMENTATION_SHARDS = 'Ax01'
+public constant ID_SELL_TOWER_HUMAN = 'Ax02'
+public constant ID_SELL_TOWER_ORC = 'Ax03'
+public constant ID_SELL_TOWER_UNDEAD = 'Ax04'
+public constant ID_SELL_TOWER_NIGHT_ELF = 'Ax05'
+public constant ID_SELL_TOWER_ANYONE = 'Ax06'
+
+
+// w3u
+
+public constant ID_GUARD_TOWER = 'hx00'
+public constant ID_CANNON_TOWER = 'hx01'
+public constant ID_ARCANE_TOWER = 'hx02'
+public constant ID_BARRACKS_HUMAN = 'hx03'
+public constant ID_SCOUT_TOWER = 'hx04'
+public constant ID_PEASANT = 'hx05'
+public constant ID_MILITIA = 'hx06'
+public constant ID_RIFLEMAN = 'hx07'
+public constant ID_SORCERESS = 'hx08'
+public constant ID_ALTAR_OF_KINGS = 'hx09'
+public constant ID_WORKER = 'hx0a'
+public constant ID_ARCANE_VAULT = 'hx0b'
+
+public constant ID_ARCHMAGE_DUMMY = 'hxx0'
+public constant ID_BLOOD_MAGE_DUMMY = 'hxx1'
+public constant ID_ARCHMAGE = 'Hx00'
+public constant ID_BLOOD_MAGE = 'Hx01'
+
+public constant ID_WATCH_TOWER = 'ox00'
+public constant ID_BARRACKS_ORC = 'ox01'
+public constant ID_PEON = 'ox02'
+public constant ID_FEL_PEON = 'ox03'
+public constant ID_HEADHUNTER = 'ox04'
+public constant ID_SHAMAN = 'ox05'
+public constant ID_ALTAR_OF_STORMS = 'ox06'
+public constant ID_ENGINEER_GAZLOWE = 'ox07'
+public constant ID_VOODOO_LOUNGE = 'ox08'
+
+public constant ID_FAR_SEER_DUMMY = 'oxx0'
+public constant ID_SHADOW_HUNTER_DUMMY = 'oxx1'
+public constant ID_FAR_SEER = 'Ox00'
+public constant ID_SHADOW_HUNTER = 'Ox01'
+
+public constant ID_SPIRIT_TOWER = 'ux00'
+public constant ID_NERUBIAN_TOWER = 'ux01'
+public constant ID_ZIGGURAT = 'ux02'
+public constant ID_CRYPT = 'ux03'
+public constant ID_ACOLYTE = 'ux04'
+public constant ID_GHOUL = 'ux05'
+public constant ID_CRYPT_FIEND = 'ux06'
+public constant ID_BANSHEE = 'ux07'
+public constant ID_ALTAR_OF_DARKNESS = 'ux08'
+public constant ID_ZOMBIE = 'ux09'
+public constant ID_TOMB_OF_RELICS = 'ux0a'
+
+public constant ID_LICH_DUMMY = 'uxx0'
+public constant ID_DARK_RANGER_DUMMY = 'uxx1'
+public constant ID_LICH = 'Ux00'
+public constant ID_DARK_RANGER = 'Ux01'
+
+public constant ID_ANCIENT_PROTECTOR = 'ex00'
+public constant ID_ANCIENT_OF_WAR = 'ex01'
+public constant ID_WISP = 'ex02'
+public constant ID_NIGHT_ELF_RUNNER = 'ex03'
+public constant ID_DRYAD = 'ex04'
+public constant ID_HUNTRESS = 'ex05'
+public constant ID_ALTAR_OF_ELDERS = 'ex06'
+public constant ID_TREANT = 'ex07'
+public constant ID_ANCIENT_OF_WONDERS = 'ex08'
+
+public constant ID_PRIESTESS_OF_THE_MOON_DUMMY = 'exx0'
+public constant ID_KEEPER_OF_THE_GROVE_DUMMY = 'exx1'
+public constant ID_PRIESTESS_OF_THE_MOON = 'Ex00'
+public constant ID_KEEPER_OF_THE_GROVE = 'Ex01'
+
+public constant HERO_DUMMY_TO_HERO = new HashMap<int, int>()
+    ..put(ID_ARCHMAGE_DUMMY, ID_ARCHMAGE)
+    ..put(ID_BLOOD_MAGE_DUMMY, ID_BLOOD_MAGE)
+    ..put(ID_FAR_SEER_DUMMY, ID_FAR_SEER)
+    ..put(ID_SHADOW_HUNTER_DUMMY, ID_SHADOW_HUNTER)
+    ..put(ID_LICH_DUMMY, ID_LICH)
+    ..put(ID_DARK_RANGER_DUMMY, ID_DARK_RANGER)
+    ..put(ID_PRIESTESS_OF_THE_MOON_DUMMY, ID_PRIESTESS_OF_THE_MOON)
+    ..put(ID_KEEPER_OF_THE_GROVE_DUMMY, ID_KEEPER_OF_THE_GROVE)
+
+public constant ID_REFEREE = 'hzxy'
+public constant ID_AT_MOST_ONE_HERO = 'hzxz'
+public constant ID_AT_LEAST_ONE_HERO = 'hzxx'
+
+public constant ID_SKY_FURY_TOWER = 'hzyx'
+public constant ID_SHACKLE_TOWER = 'hzyy'
+
+
+// w3a instances
+
+@compiletime function create_custom_magic_sentry()
+    createObjectDefinition("w3a", ID_MAGIC_SENTRY, 'Adts')
+    ..setLvlDataString("areq", 0, 0, "")
+
+
+@compiletime function create_custom_fragmentation_shards()
+    createObjectDefinition("w3a", ID_FRAGMENTATION_SHARDS, 'Afsh')
+    ..setLvlDataString("areq", 0, 0, "")
+
+
+class SellAbility extends AbilityDefinitionRoar
+    construct(int id, string dependsOn)
+        super(id)
+        setManaCost(1, 0)
+        setButtonPositionNormalY(0)
+        setIconNormal(Icons.bTNChestOfGold)
+        setArtCaster("")
+        setRequirements(dependsOn)
+        setName("Sell tower")
+        setTooltipNormal(1, "Sell tower")
+        setTooltipNormalExtended(
+            1,
+            "Sell this tower, returning 80% of the cost.|n|n" + "Hint:".color(COLOR_GOLD) + " if you can't sell a "
+            + "tower but have blocked, you can destroy it instead by attacking it with your other towers."
+        )
+
+@compiletime function create_sell_tower_abilities()
+    new SellAbility(ID_SELL_TOWER_HUMAN, commaList(ID_ARCANE_VAULT))
+    new SellAbility(ID_SELL_TOWER_ORC, commaList(ID_VOODOO_LOUNGE))
+    new SellAbility(ID_SELL_TOWER_UNDEAD, commaList(ID_TOMB_OF_RELICS))
+    new SellAbility(ID_SELL_TOWER_NIGHT_ELF, commaList(ID_ANCIENT_OF_WONDERS))
+    new SellAbility(ID_SELL_TOWER_ANYONE, "")
+
+
+// w3u instances
+
+
+@compiletime function create_custom_scout_tower()
+    createObjectDefinition("w3u", ID_SCOUT_TOWER, 'hwtw')
+    ..setString("ureq", "")
+    ..setString("uabi", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_HUMAN))
+    ..setString("uabs", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_HUMAN))
+    ..setString("uupt", commaList(ID_GUARD_TOWER, ID_CANNON_TOWER, ID_ARCANE_TOWER))
+
+@compiletime function create_custom_guard_tower()
+    createObjectDefinition("w3u", ID_GUARD_TOWER, 'hgtw')
+    ..setString("ureq", "")
+    ..setString("uabi", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_HUMAN))
+    ..setString("uabs", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_HUMAN))
+
+
+@compiletime function create_custom_cannon_tower()
+    createObjectDefinition("w3u", ID_CANNON_TOWER, 'hctw')
+    ..setString("ureq", "")
+    ..setString("ua1p", "debris,enemies,ground,structure,tree,wall")
+    ..setString("uabi", commaList(ID_MAGIC_SENTRY, ID_FRAGMENTATION_SHARDS, ID_SELL_TOWER_HUMAN))
+    ..setString("uabs", commaList(ID_MAGIC_SENTRY, ID_FRAGMENTATION_SHARDS, ID_SELL_TOWER_HUMAN))
+
+
+@compiletime function create_custom_arcane_tower()
+    createObjectDefinition("w3u", ID_ARCANE_TOWER, 'hatw')
+    ..setString("uabi", commaList('Afbt', ID_MAGIC_SENTRY, ID_SELL_TOWER_HUMAN))
+    ..setString("uabs", commaList('Afbt', ID_MAGIC_SENTRY, ID_SELL_TOWER_HUMAN))
+
+
+@compiletime function create_custom_watch_tower()
+    createObjectDefinition("w3u", ID_WATCH_TOWER, 'owtw')
+    ..setString("ureq", "")
+    ..setString("uabi", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_ORC))
+    ..setString("uabs", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_ORC))
+
+
+@compiletime function create_custom_spirit_tower()
+    createObjectDefinition("w3u", ID_SPIRIT_TOWER, 'uzg1')
+    ..setString("ureq", "")
+    ..setString("uabi", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_UNDEAD))
+    ..setString("upar", "")
+    ..setString("uabs", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_UNDEAD))
+
+
+@compiletime function create_custom_nerubian_tower()
+    createObjectDefinition("w3u", ID_NERUBIAN_TOWER, 'uzg2')
+    ..setString("uabi", commaList('Afra', ID_MAGIC_SENTRY, ID_SELL_TOWER_UNDEAD))
+    ..setString("upar", "")
+    ..setString("uabs", commaList('Afra', ID_MAGIC_SENTRY, ID_SELL_TOWER_UNDEAD))
+
+
+@compiletime function create_custom_ziggurat()
+    createObjectDefinition("w3u", ID_ZIGGURAT, 'uzig')
+    ..setString("upar", "")
+    ..setString("uabi", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_UNDEAD))
+    ..setString("uabs", commaList(ID_MAGIC_SENTRY, ID_SELL_TOWER_UNDEAD))
+    ..setString("uupt", commaList(ID_SPIRIT_TOWER, ID_NERUBIAN_TOWER))
+
+
+@compiletime function create_custom_ancient_protector()
+    createObjectDefinition("w3u", ID_ANCIENT_PROTECTOR, 'etrp')
+    ..setString("ureq", "")
+    ..setString("utyp", "mechanical")
+    ..setString("uabi", commaList('Aro2', ID_MAGIC_SENTRY, ID_SELL_TOWER_NIGHT_ELF))
+    ..setInt("ugol", 195)
+    ..setString("uabs", commaList('Aro2', ID_MAGIC_SENTRY, ID_SELL_TOWER_NIGHT_ELF))
+
+
+@compiletime function create_custom_barracks_human()
+    createObjectDefinition("w3u", ID_BARRACKS_HUMAN, 'hbar')
+    ..setString("uabi", "")
+    ..setString("ures", "")
+    ..setString("utra", commaList(ID_MILITIA))
+    ..setString("upgr", "")
+    ..setString("ureq", commaList(ID_SCOUT_TOWER))
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setString("uabs", "")
+    ..setString("utub", "Techtree building. Can train militia, which build unit-tier towers.")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_barracks_orc()
+    createObjectDefinition("w3u", ID_BARRACKS_ORC, 'obar')
+    ..setString("uabi", "")
+    ..setString("ures", "")
+    ..setString("utra", commaList(ID_FEL_PEON))
+    ..setString("upgr", "")
+    ..setString("ureq", commaList(ID_WATCH_TOWER))
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setString("uabs", "")
+    ..setString("utub", "Techtree building. Can train fel peons, which build unit-tier towers.")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_crypt()
+    createObjectDefinition("w3u", ID_CRYPT, 'usep')
+    ..setString("uabi", "")
+    ..setString("ures", "")
+    ..setString("utra", commaList(ID_GHOUL))
+    ..setString("upgr", "")
+    ..setString("ureq", commaList(ID_ZIGGURAT))
+    ..setString("upar", "")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setString("uabs", "")
+    ..setString("utub", "Techtree building. Can train ghouls, which build unit-tier towers.")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_ancient_of_war()
+    createObjectDefinition("w3u", ID_ANCIENT_OF_WAR, 'eaom')
+    ..setString("uabi", "Aro1")
+    ..setString("ures", "")
+    ..setString("utra", commaList(ID_NIGHT_ELF_RUNNER))
+    ..setString("upgr", "")
+    ..setString("ureq", commaList(ID_ANCIENT_PROTECTOR))
+    ..setString("utyp", "mechanical")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setString("uabs", "Aro1")
+    ..setString("utub", "Techtree building. Can train runners, which build unit-tier towers.")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_peasant()
+    createObjectDefinition("w3u", ID_PEASANT, 'hpea')
+    ..setInt("ufoo", 0)
+    ..setString("uabi", "Ahrp")
+    ..setString("ubui", commaList(ID_BARRACKS_HUMAN, ID_SCOUT_TOWER, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_ARCANE_VAULT))
+    ..setUnreal("ucol", 0.1)
+    ..setString("uabs", "Ahrp")
+    ..setInt("usid", 50000)
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_peon()
+    createObjectDefinition("w3u", ID_PEON, 'opeo')
+    ..setInt("ufoo", 0)
+    ..setString("uabi", "Arep")
+    ..setString("ubui", commaList(ID_BARRACKS_ORC, ID_WATCH_TOWER, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_VOODOO_LOUNGE))
+    ..setUnreal("ucol", 0.1)
+    ..setString("uabs", "Arep")
+    ..setInt("usid", 50000)
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_acolyte()
+    createObjectDefinition("w3u", ID_ACOLYTE, 'uaco')
+    ..setInt("ufoo", 0)
+    ..setString("uabi", commaList(AbilityIds.restore))
+    ..setString("ubui", commaList(ID_ZIGGURAT, ID_CRYPT, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_TOMB_OF_RELICS))
+    ..setUnreal("ucol", 0.1)
+    ..setInt("usid", 50000)
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_wisp()
+    createObjectDefinition("w3u", ID_WISP, 'ewsp')
+    ..setInt("ufoo", 0)
+    ..setString("ubui", commaList(ID_ANCIENT_OF_WAR, ID_ANCIENT_PROTECTOR, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_ANCIENT_OF_WONDERS))
+    ..setUnreal("ucol", 0.1)
+    ..setInt("usid", 50000)
+    ..setString("umvt", "fly")
+    ..setString("uabi", commaList(AbilityIds.renew))
+    ..setString("uabs", commaList(AbilityIds.renew))
+
+
+@compiletime function create_custom_militia()
+    createObjectDefinition("w3u", ID_MILITIA, 'hmil')
+    ..setInt("ufoo", 0)
+    ..setString("uabi", "Ahrp")
+    ..setString("ubui", commaList(ID_ALTAR_OF_KINGS, ID_SORCERESS, ID_RIFLEMAN))
+    ..setString("upgr", "")
+    ..setString("utyp", "peon")
+    ..setUnreal("ucol", 0.1)
+    ..setString("uabs", "Ahrp")
+    ..setString("utip", "Train Militia")
+    ..setString("utub", "Ohhhh shit it's militia")
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_fel_peon()
+    createObjectDefinition("w3u", ID_FEL_PEON, 'ncpn')
+    ..setString("uabi", "Arep")
+    ..setString("ubui", commaList(ID_ALTAR_OF_STORMS, ID_SHAMAN, ID_HEADHUNTER))
+    ..setString("upgr", "")
+    ..setInt("ufoo", 0)
+    ..setUnreal("ucol", 0.1)
+    ..setString("uabs", "Arep")
+    ..setString("utub", "Basic worker unit. Builds unit-tier towers.")
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_ghoul()
+    createObjectDefinition("w3u", ID_GHOUL, 'ugho')
+    ..setInt("ufoo", 0)
+    ..setString("upgr", "")
+    ..setString("ubui", commaList(ID_ALTAR_OF_DARKNESS, ID_BANSHEE, ID_CRYPT_FIEND))
+    ..setString("utyp", "undead,peon")
+    ..setUnreal("ucol", 0.1)
+    ..setString("uabs", "")
+    ..setString("umvt", "fly")
+    ..setString("uabi", commaList(AbilityIds.restore))
+
+
+@compiletime function create_custom_night_elf_runner()
+    createObjectDefinition("w3u", ID_NIGHT_ELF_RUNNER, 'enec')
+    ..setString("ubui", commaList(ID_ALTAR_OF_ELDERS, ID_HUNTRESS, ID_DRYAD))
+    ..setInt("ugol", 50)
+    ..setInt("ulum", 200)
+    ..setString("utyp", "peon")
+    ..setUnreal("ucol", 0.1)
+    ..setString("utip", "Train Night Elf Runner")
+    ..setString("utub", "Can build unit-tier Night Elf towers.")
+    ..setString("umvt", "fly")
+    ..setString("uabi", commaList(AbilityIds.renew))
+    ..setString("uabs", commaList(AbilityIds.renew))
+
+
+@compiletime function create_custom_dryad()
+    createObjectDefinition("w3u", ID_DRYAD, 'edry')
+    ..setString("upgr", "")
+    ..setInt("ufoo", 0)
+    ..setInt("ubdg", 1)
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setString("upap", "unbuildable")
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("udaa", "")
+    ..setInt("ua1b", 48)
+    ..setInt("ua1d", 3)
+    ..setString("uubs", "HSMA")
+    ..setString("uabs", commaList(AbilityIds.abolishMagic, AbilityIds.spellImmunity2, AbilityIds.slowPoison, ID_SELL_TOWER_NIGHT_ELF))
+    ..setString("uabi", commaList(AbilityIds.abolishMagic, AbilityIds.spellImmunity2, AbilityIds.slowPoison, ID_SELL_TOWER_NIGHT_ELF))
+
+
+@compiletime function create_custom_crypt_fiend()
+    createObjectDefinition("w3u", ID_CRYPT_FIEND, 'ucry')
+    ..setInt("ubdg", 1)
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setInt("ufoo", 0)
+    ..setString("ureq", "")
+    ..setString("udep", "")
+    ..setString("upgr", "")
+    ..setString("upap", "unbuildable")
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setInt("ua1b", 75)
+    ..setInt("ua1d", 3)
+    ..setString("uabs", commaList(AbilityIds.spiderAttack, ID_SELL_TOWER_UNDEAD))
+    ..setString("uabi", commaList(AbilityIds.spiderAttack, ID_SELL_TOWER_UNDEAD))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_headhunter()
+    createObjectDefinition("w3u", ID_HEADHUNTER, 'ohun')
+    ..setInt("ubdg", 1)
+    ..setString("upgr", "")
+    ..setString("ureq", "")
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setInt("ufoo", 0)
+    ..setString("upap", "unbuildable")
+    ..setString("umvt", "")
+    ..setInt("umvs", 0)
+    ..setInt("ua1b", 66)
+    ..setInt("ua1d", 3)
+    ..setString("uabs", commaList(ID_SELL_TOWER_ORC))
+    ..setString("uabi", commaList(ID_SELL_TOWER_ORC))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_rifleman()
+    createObjectDefinition("w3u", ID_RIFLEMAN, 'hrif')
+    ..setInt("ubdg", 1)
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setString("upgr", "")
+    ..setString("ureq", "")
+    ..setInt("ufoo", 0)
+    ..setString("upap", "unbuildable")
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("utyp", "mechanical")
+    ..setInt("ua1b", 48)
+    ..setInt("ua1d", 6)
+    ..setString("uabs", commaList(ID_SELL_TOWER_HUMAN))
+    ..setString("uabi", commaList(ID_SELL_TOWER_HUMAN))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_sorceress()
+    createObjectDefinition("w3u", ID_SORCERESS, 'hsor')
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setString("upap", "unbuildable")
+    ..setInt("ufoo", 0)
+    ..setString("upgr", "")
+    ..setString("utyp", "mechanical")
+    ..setInt("ua1b", 27)
+    ..setInt("ua1d", 3)
+    ..setString("uabs", commaList(AbilityIds.slow, ID_SELL_TOWER_HUMAN))
+    ..setString("uabi", commaList(AbilityIds.slow, ID_SELL_TOWER_HUMAN))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_shaman()
+    createObjectDefinition("w3u", ID_SHAMAN, 'oshm')
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setString("upap", "unbuildable")
+    ..setInt("ufoo", 0)
+    ..setString("upgr", "")
+    ..setInt("ua1b", 27)
+    ..setInt("ua1d", 3)
+    ..setString("uabs", commaList(AbilityIds.bloodlust1, ID_SELL_TOWER_ORC))
+    ..setString("uabi", commaList(AbilityIds.bloodlust1, ID_SELL_TOWER_ORC))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_banshee()
+    createObjectDefinition("w3u", ID_BANSHEE, 'uban')
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("upap", "unbuildable")
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setInt("ufoo", 0)
+    ..setString("upgr", "")
+    ..setInt("ua1b", 24)
+    ..setInt("ua1d", 3)
+    ..setString("uabi", commaList(AbilityIds.unholyFrenzy, ID_SELL_TOWER_UNDEAD))
+    ..setString("uabs", commaList(AbilityIds.unholyFrenzy, ID_SELL_TOWER_UNDEAD))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_huntress()
+    createObjectDefinition("w3u", ID_HUNTRESS, 'esen')
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("upap", "unbuildable")
+    ..setString("upat", "PathTextures\\4x4SimpleSolid.tga")
+    ..setInt("ufoo", 0)
+    ..setString("upgr", "")
+    ..setString("ureq", "")
+    ..setInt("ua1d", 3)
+    ..setInt("ua1b", 45)
+    ..setString("uabs", commaList(ID_SELL_TOWER_NIGHT_ELF))
+    ..setString("uabi", commaList(ID_SELL_TOWER_NIGHT_ELF))
+    ..setString("uubs", "HSMA")
+
+
+@compiletime function create_custom_altar_of_kings()
+    createObjectDefinition("w3u", ID_ALTAR_OF_KINGS, 'halt')
+    ..setString("utra", commaList(ID_WORKER))
+    ..setString("upgr", "")
+    ..setString("ureq", commaList(ID_RIFLEMAN, ID_SORCERESS))
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_altar_of_storms()
+    createObjectDefinition("w3u", ID_ALTAR_OF_STORMS, 'oalt')
+    ..setString("ureq", commaList(ID_HEADHUNTER, ID_SHAMAN))
+    ..setString("utra", commaList(ID_ENGINEER_GAZLOWE))
+    ..setString("upgr", "")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_altar_of_darkness()
+    createObjectDefinition("w3u", ID_ALTAR_OF_DARKNESS, 'uaod')
+    ..setString("utra", commaList(ID_ZOMBIE))
+    ..setString("upgr", "")
+    ..setString("uabi", "")
+    ..setString("ureq", commaList(ID_CRYPT_FIEND, ID_BANSHEE))
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setString("upar", "")
+    ..setString("uabs", "")
+    ..setReal("usca", 0.75)
+
+
+@compiletime function create_custom_altar_of_elders()
+    createObjectDefinition("w3u", ID_ALTAR_OF_ELDERS, 'eate')
+    ..setString("utra", commaList(ID_TREANT))
+    ..setString("upgr", "")
+    ..setString("ureq", commaList(ID_HUNTRESS, ID_DRYAD))
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+    ..setString("uabi", "")
+    ..setString("uabs", "")
+
+
+@compiletime function create_custom_worker()
+    createObjectDefinition("w3u", ID_WORKER, 'nhew')
+    ..setString("ubui", commaList(ID_ARCHMAGE_DUMMY, ID_BLOOD_MAGE_DUMMY))
+    ..setString("upgr", "")
+    ..setInt("ufoo", 0)
+    ..setString("uabi", "Ahrp")
+    ..setUnreal("ucol", 0.1)
+    ..setString("uabs", "Ahrp")
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_engineer_gazlowe()
+    createObjectDefinition("w3u", ID_ENGINEER_GAZLOWE, 'negz')
+    ..setString("uabi", "")
+    ..setInt("ufoo", 0)
+    ..setString("utyp", "peon")
+    ..setString("ubui", commaList(ID_FAR_SEER_DUMMY, ID_SHADOW_HUNTER_DUMMY))
+    ..setUnreal("ucol", 0.1)
+    ..setString("utip", "Train Engineer Gazlowe")
+    ..setString("utub", "Supadupa builder")
+    ..setString("uabs", "")
+    ..setString("umvt", "fly")
+
+
+@compiletime function create_custom_zombie()
+    createObjectDefinition("w3u", ID_ZOMBIE, 'nzom')
+    ..setInt("ufoo", 0)
+    ..setString("ubui", commaList(ID_LICH_DUMMY, ID_DARK_RANGER_DUMMY))
+    ..setString("utyp", "undead,peon")
+    ..setUnreal("ucol", 0.1)
+    ..setString("utub", "Builds stuff actually")
+    ..setString("umvt", "fly")
+    ..setString("uabi", commaList(AbilityIds.restore))
+
+
+@compiletime function create_custom_treant()
+    createObjectDefinition("w3u", ID_TREANT, 'efon')
+    ..setString("upgr", "")
+    ..setString("ubui", commaList(ID_KEEPER_OF_THE_GROVE_DUMMY, ID_PRIESTESS_OF_THE_MOON_DUMMY))
+    ..setString("utyp", "peon")
+    ..setUnreal("ucol", 0.1)
+    ..setInt("ugol", 99)
+    ..setInt("ulum", 1)
+    ..setString("utip", "Train Trent the Treant")
+    ..setString("utub", "Builds like the dickens")
+    ..setString("umvt", "fly")
+    ..setString("uabi", commaList(AbilityIds.renew))
+    ..setString("uabs", commaList(AbilityIds.renew))
+
+
+// Referee
+
+@compiletime function create_referee()
+    new UnitDefinition(ID_REFEREE, 'hfoo')
+    ..setScalingValue(0.5)
+    ..setSpeedBase(522)
+    ..setTurnRate(1.)
+    ..setMovementType(MovementType.Hover)
+    ..setShadowImageWidth(0.)
+    ..setShadowImageHeight(0.)
+    ..setName("Referee")
+    ..setCollisionSize(0.1)
+    ..setSelectionScale(0.1)
+    ..setAttack1DamageBase(1000)
+    ..setFoodCost(0)
+
+// Tech units
+
+class TechUnit extends UnitDefinition
+    construct(int id, string name)
+        super(id, 'hfoo')
+        setScalingValue(0.1)
+        setSpeedBase(522)
+        setTurnRate(1.)
+        setMovementType(MovementType.Hover)
+        setShadowImageWidth(0.)
+        setShadowImageHeight(0.)
+        setName(name)
+        setCollisionSize(0.1)
+        setSelectionScale(0.1)
+        setAttacksEnabled(0)
+        setNormalAbilities(commaList(AbilityIds.locust))
+        setModelFile("none.mdl")
+
+@compiletime function create_tech_units()
+    new TechUnit(ID_AT_MOST_ONE_HERO, "At most one hero")
+    new TechUnit(ID_AT_LEAST_ONE_HERO, "At least one hero")
+
+
+// Heroes
+
+class CustomHeroDummy extends BuildingDefinition
+    construct(int id, string model, string icon, string name, string ttExtended)
+        super(id, UnitIds.farm)
+        setModelFile(model)
+        setIconGameInterface(icon)
+        setName(name)
+        setTooltipBasic("Build " + name)
+        setTooltipExtended(ttExtended)
+        setGoldCost(300)
+        setLumberCost(300)
+        setRequirements(commaList(ID_AT_MOST_ONE_HERO))
+        setNormalAbilities(commaList(AbilityIds.invulnerable))
+
+
+@compiletime function create_custom_hero_dummies()
+    new CustomHeroDummy(ID_ARCHMAGE_DUMMY, Units.heroArchMage, Icons.bTNHeroArchMage, "Archmage", "Supadupa hero tower")
+    new CustomHeroDummy(ID_BLOOD_MAGE_DUMMY, Units.kael, Icons.bTNBLoodMage2, "Blood Mage", "Supadupa hero tower")
+    new CustomHeroDummy(ID_FAR_SEER_DUMMY, Units.heroFarSeer, Icons.bTNHeroFarseer, "Far Seer", "Supadupa hero tower")
+    new CustomHeroDummy(ID_SHADOW_HUNTER_DUMMY, Units.heroShadowHunter1, Icons.bTNShadowHunter, "Shadow Hunter", "Supadupa hero tower")
+    new CustomHeroDummy(ID_LICH_DUMMY, Units.heroLich1, Icons.bTNLichVersion2, "Lich", "Supadupa hero tower")
+    new CustomHeroDummy(ID_DARK_RANGER_DUMMY, Units.bansheeRanger1, Icons.bTNBansheeRanger, "Dark Ranger", "Supadupa hero tower")
+    new CustomHeroDummy(ID_PRIESTESS_OF_THE_MOON_DUMMY, Units.heroMoonPriestess, Icons.bTNPriestessOfTheMoon, "Priestess of the Moon", "Supadupa hero tower")
+    new CustomHeroDummy(ID_KEEPER_OF_THE_GROVE_DUMMY, Units.heroKeeperoftheGrove, Icons.bTNKeeperOfTheGrove, "Keeper of the Grove", "Supadupa hero tower")
+
+
+@compiletime function create_custom_priestess_of_the_moon()
+    createObjectDefinition("w3u", ID_PRIESTESS_OF_THE_MOON, 'Emoo')
+    ..setInt("ufoo", 0)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setInt("ubdg", 1)
+    ..setString("upgr", "")
+    ..setInt("uagi", 38)
+    ..setInt("uint", 30)
+    ..setInt("ustr", 36)
+    ..setUnreal("uagp", 3.)
+    ..setUnreal("uinp", 5.2)
+    ..setUnreal("ustp", 3.8)
+    ..setString("uhab", commaList(AbilityIds.searingArrows1, AbilityIds.trueshotAura1, AbilityIds.starfall, AbilityIds.stormBolt))
+    ..setString("uhas", commaList(AbilityIds.searingArrows1, AbilityIds.trueshotAura1, AbilityIds.starfall, AbilityIds.stormBolt))
+
+
+@compiletime function create_custom_keeper_of_the_grove()
+    createObjectDefinition("w3u", ID_KEEPER_OF_THE_GROVE, 'Ekee')
+    ..setInt("ufoo", 0)
+    ..setInt("ubdg", 1)
+    ..setString("umvt", "")
+    ..setInt("umvs", 0)
+    ..setInt("uagi", 30)
+    ..setInt("uint", 36)
+    ..setInt("ustr", 32)
+    ..setUnreal("uagp", 3.)
+    ..setUnreal("uinp", 5.4)
+    ..setUnreal("ustp", 3.6)
+    ..setString("uhab", commaList(AbilityIds.entanglingRoots1, AbilityIds.forceofNature1, AbilityIds.enduranceAura1, AbilityIds.pitLordDoom))
+    ..setString("uhas", commaList(AbilityIds.entanglingRoots1, AbilityIds.forceofNature1, AbilityIds.enduranceAura1, AbilityIds.pitLordDoom))
+
+
+@compiletime function create_custom_lich()
+    createObjectDefinition("w3u", ID_LICH, 'Ulic')
+    ..setInt("ufoo", 0)
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setInt("uagi", 28)
+    ..setInt("uint", 40)
+    ..setInt("ustr", 30)
+    ..setUnreal("uagp", 2.)
+    ..setUnreal("uinp", 6.8)
+    ..setUnreal("ustp", 4.)
+
+
+@compiletime function create_custom_dark_ranger()
+    createObjectDefinition("w3u", ID_DARK_RANGER, 'Nbrn')
+    ..setInt("ufoo", 0)
+    ..setString("urac", "undead")
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setInt("uagi", 42)
+    ..setInt("uint", 30)
+    ..setInt("ustr", 36)
+    ..setUnreal("uagp", 3.)
+    ..setUnreal("uinp", 5.2)
+    ..setUnreal("ustp", 3.8)
+
+
+@compiletime function create_custom_far_seer()
+    createObjectDefinition("w3u", ID_FAR_SEER, 'Ofar')
+    ..setInt("ufoo", 0)
+    ..setInt("ubdg", 1)
+    ..setString("umvt", "")
+    ..setInt("umvs", 0)
+    ..setString("uhab", commaList(AbilityIds.feralSpirit2, AbilityIds.chainLightning1, AbilityIds.earthquake1, AbilityIds.bash))
+    ..setString("uhas", commaList(AbilityIds.feralSpirit2, AbilityIds.chainLightning1, AbilityIds.earthquake1, AbilityIds.bash))
+    ..setInt("uagi", 36)
+    ..setInt("uint", 38)
+    ..setInt("ustr", 30)
+    ..setUnreal("uagp", 2.)
+    ..setUnreal("uinp", 6.)
+    ..setUnreal("ustp", 4.)
+
+
+@compiletime function create_custom_shadow_hunter()
+    createObjectDefinition("w3u", ID_SHADOW_HUNTER, 'Oshd')
+    ..setInt("ubdg", 1)
+    ..setInt("ufoo", 0)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("uhab", commaList(AbilityIds.shadowHunterHex, AbilityIds.shadowHunterSerpentWard, AbilityIds.seaWitchForkedLightning, AbilityIds.transmute))
+    ..setString("uhas", commaList(AbilityIds.shadowHunterHex, AbilityIds.shadowHunterSerpentWard, AbilityIds.seaWitchForkedLightning, AbilityIds.transmute))
+    ..setInt("uagi", 40)
+    ..setInt("uint", 34)
+    ..setInt("ustr", 30)
+    ..setUnreal("uagp", 3.)
+    ..setUnreal("uinp", 5.)
+    ..setUnreal("ustp", 4.)
+
+
+@compiletime function create_custom_archmage()
+    createObjectDefinition("w3u", ID_ARCHMAGE, 'Hamg')
+    ..setInt("ufoo", 0)
+    ..setInt("ubdg", 1)
+    ..setInt("umvs", 0)
+    ..setString("umvt", "")
+    ..setString("utyp", "mechanical")
+    ..setString("uhab", commaList(AbilityIds.beastMasterStampede, AbilityIds.blizzard, AbilityIds.brillianceAura, AbilityIds.summonWaterElemental))
+    ..setString("uhas", commaList(AbilityIds.beastMasterStampede, AbilityIds.blizzard, AbilityIds.brillianceAura, AbilityIds.summonWaterElemental))
+    ..setInt("uagi", 34)
+    ..setInt("uint", 38)
+    ..setInt("ustr", 28)
+    ..setUnreal("uagp", 2.)
+    ..setUnreal("uinp", 6.4)
+    ..setUnreal("ustp", 3.6)
+
+
+@compiletime function create_custom_blood_mage()
+    createObjectDefinition("w3u", ID_BLOOD_MAGE, 'Hblm')
+    ..setString("umvt", "")
+    ..setInt("umvs", 0)
+    ..setInt("ubdg", 1)
+    ..setInt("ufoo", 0)
+    ..setString("utyp", "mechanical")
+    ..setString("uhab", commaList(AbilityIds.criticalStrike1, AbilityIds.bloodMageFlameStrike, AbilityIds.banish, AbilityIds.phoenix))
+    ..setString("uhas", commaList(AbilityIds.criticalStrike1, AbilityIds.bloodMageFlameStrike, AbilityIds.banish, AbilityIds.phoenix))
+    ..setInt("uagi", 28)
+    ..setInt("uint", 38)
+    ..setInt("ustr", 36)
+    ..setUnreal("uagp", 2.)
+    ..setUnreal("uinp", 6.)
+    ..setUnreal("ustp", 4.)
+
+
+@compiletime function create_sky_fury_tower()
+    new BuildingDefinition(ID_SKY_FURY_TOWER, UnitIds.skyfurytower)
+    ..setRequirements(commaList(ID_AT_LEAST_ONE_HERO))
+    ..setTooltipBasic("Build Sky Fury Tower")
+    ..setTooltipExtended("Super strong anti-air etc")
+    ..setGoldCost(1000)
+    ..setAttack1DamageBase(1000)
+    ..setPathingMap("PathTextures\\4x4SimpleSolid.tga")
+    ..setPlacementRequires("unbuildable")
+    ..setNormalAbilities(commaList(ID_SELL_TOWER_ANYONE))
+
+
+@compiletime function create_leash_tower()
+    new BuildingDefinition(ID_SHACKLE_TOWER, UnitIds.earthfurytower)
+    ..setRequirements(commaList(ID_AT_LEAST_ONE_HERO))
+    ..setTooltipBasic("Build Shackle Tower")
+    ..setTooltipExtended("Has the shackle ability, which can bind an enemy unit, preventing it from moving.")
+    ..setGoldCost(1000)
+    ..setAttacksEnabled(0)
+    ..setPathingMap("PathTextures\\4x4SimpleSolid.tga")
+    ..setPlacementRequires("unbuildable")
+    ..setNormalAbilities(commaList(AbilityIds.aerialShackles, ID_SELL_TOWER_ANYONE))
+    ..setName("Shackle Tower")
+
+
+@compiletime function create_arcane_vault()
+    createObjectDefinition("w3u", ID_ARCANE_VAULT, UnitIds.arcanevault)
+    ..setString("upgr", "")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+    ..setString("umki", commaList(ItemIds.lesserClarityPotion, ItemIds.potionofMana, ItemIds.orbofFireNew))
+
+
+@compiletime function create_voodoo_lounge()
+    createObjectDefinition("w3u", ID_VOODOO_LOUNGE, UnitIds.voodoolounge)
+    ..setString("upgr", "")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+    ..setString("umki", commaList(ItemIds.lesserClarityPotion, ItemIds.potionofMana, ItemIds.orbofLightningNew))
+
+
+@compiletime function create_tomb_of_relics()
+    createObjectDefinition("w3u", ID_TOMB_OF_RELICS, UnitIds.tombofrelics)
+    ..setString("upgr", "")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+    ..setString("umki", commaList(ItemIds.lesserClarityPotion, ItemIds.potionofMana, ItemIds.orbofCorruption))
+
+
+@compiletime function create_ancient_of_wonders()
+    createObjectDefinition("w3u", ID_ANCIENT_OF_WONDERS, UnitIds.ancientofwonders)
+    ..setString("upgr", "")
+    ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
+    ..setReal("usca", 0.75)
+    ..setString("umki", commaList(ItemIds.lesserClarityPotion, ItemIds.potionofMana, ItemIds.orbofVenom))

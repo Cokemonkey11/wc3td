@@ -1,0 +1,22 @@
+package TowerAutoAbilities
+
+import DamageEvent
+
+import PlayerUnits
+
+
+init
+    DamageEvent.addListener() ->
+        switch DamageEvent.getType()
+            case ATTACK
+                let ds = DamageEvent.getSource()
+                let dt = DamageEvent.getTarget()
+                if ds.getTypeId() == ID_SORCERESS
+                    ds.issueTargetOrder("sloW", dt)
+
+            case SPELL
+                skip
+            case CODE
+                skip
+            default
+                skip

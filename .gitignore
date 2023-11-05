@@ -1,0 +1,5 @@
+/_build
+wurst.dependencies
+/.vscode
+*.j.txt
+temp/

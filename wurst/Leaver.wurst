@@ -1,0 +1,14 @@
+package Leaver
+
+import AbilityIds
+import ClosureForGroups
+import RegisterEvents
+
+init
+    registerPlayerEvent(EVENT_PLAYER_LEAVE) ->
+        let pp = GetTriggerPlayer()
+        print(pp.getName().color(COLOR_GOLD) + " has left the game ;(")
+
+        forUnitsOfPlayer(pp) (unit u) ->
+            if u.isType(UNIT_TYPE_PEON)
+                u..setTimeScale(0.)..setVertexColor(colorA(255, 255, 255, 155))..addAbility(AbilityIds.locust)

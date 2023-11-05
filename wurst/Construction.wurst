@@ -1,0 +1,51 @@
+package Construction
+
+import ClosureEvents
+import ClosureTimers
+import HashMap
+
+import Init
+import PlayerUnits
+
+public constant heroTowers = CreateGroup()
+
+constant reverseMap = new HashMap<unit, unit>()
+
+public constant atLeastOneHeroes = new HashMap<int, unit>()
+
+
+init
+    CreateTrigger()..registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START)..addCondition(Condition(() -> begin
+        let tu = GetConstructingStructure()
+        doAfter(0.01) ->
+            UnitSetConstructionProgress(tu, 99)
+            if HERO_DUMMY_TO_HERO.has(tu.getTypeId())
+                atMostOneHeroes.get(tu.getOwner().getId()).remove()
+                if not atLeastOneHeroes.has(tu.getOwner().getId())
+                    atLeastOneHeroes.put(tu.getOwner().getId(), createUnit(tu.getOwner(), ID_AT_LEAST_ONE_HERO))
+                let newUnit = createUnit(tu.getOwner(), HERO_DUMMY_TO_HERO.get(tu.getTypeId()), tu.getPos(), 270 .asAngleDegrees())
+                reverseMap.put(newUnit, tu)
+                heroTowers.add(newUnit)
+                tu..setScale(0.1)
+                doAfter(1.) ->
+                    tu..setOwner(players[PLAYER_NEUTRAL_PASSIVE], true)
+        return false
+    end))
+
+    CreateTrigger()..registerAnyUnitEvent(EVENT_PLAYER_UNIT_UPGRADE_START)..addCondition(Condition(() -> begin
+        let tu = GetTriggerUnit()
+        doAfter(0.01) ->
+            UnitSetUpgradeProgress(tu, 99)
+        return false
+    end))
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) ->
+        let du = GetDyingUnit()
+        if reverseMap.has(du)
+            reverseMap.get(du).remove()
+            reverseMap.remove(du)
+            doAfter(5.) ->
+                du.remove()
+                atMostOneHeroes.put(du.getOwner().getId(), createUnit(du.getOwner(), ID_AT_MOST_ONE_HERO))
+                if atLeastOneHeroes.has(du.getOwner().getId())
+                    atLeastOneHeroes.get(du.getOwner().getId()).remove()

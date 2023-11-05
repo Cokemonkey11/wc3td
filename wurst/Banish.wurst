@@ -1,0 +1,14 @@
+package Banish
+
+import AbilityIds
+import ClosureEvents
+import ClosureTimers
+
+init
+    EventListener.onCast(AbilityIds.banish) _ ->
+        let target = EventData.getSpellTargetUnit()
+        target.setMoveSpeed(0.)
+        target.setPropWindow(angle(0.))
+        doAfter(5.) ->
+            target.setMoveSpeed(target.getDefaultMovespeed())
+            target.setPropWindow(target.getDefaultPropWindow())

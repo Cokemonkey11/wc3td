@@ -1,0 +1,29 @@
+package WorkerTrained
+
+import HashSet
+import OnUnitEnterLeave
+
+import Players
+import PlayerUnits
+
+constant workerIds = new HashSet<int>()..add(
+    ID_PEASANT,
+    ID_WISP,
+    ID_PEON,
+    ID_ACOLYTE,
+    ID_GHOUL,
+    ID_FEL_PEON,
+    ID_NIGHT_ELF_RUNNER,
+    ID_MILITIA,
+    ID_WORKER,
+    ID_ENGINEER_GAZLOWE,
+    ID_ZOMBIE,
+    ID_TREANT
+)
+
+init
+    onEnter(() -> begin
+        let enteringUnit = getEnterLeaveUnit()
+        if not wavePlayers.has(enteringUnit.getOwner()) and workerIds.has(enteringUnit.getTypeId())
+            enteringUnit..addAbility('Arav')..removeAbility('Arav')..setFlyHeight(100., 0.)..setPathing(false)..setInvulnerable(true)..removeAbility('Aatk')
+    end)

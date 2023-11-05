@@ -1,0 +1,16 @@
+package Antiblock
+
+import ClosureEvents
+import UnitIds
+
+import Players
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) ->
+        let ku = GetKillingUnit()
+        if wavePlayers.has(ku.getOwner())
+            if ku.getTypeId() == UnitIds.kael
+                ku.issuePointOrder("move", players[23].getStartLocation())
+            else
+                ku.issuePointOrder("move", vec2(0., -1790.))

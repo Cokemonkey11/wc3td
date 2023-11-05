@@ -1,0 +1,66 @@
+package Income
+
+import ClosureForGroups
+import ClosureTimers
+import LinkedList
+import StandardTextTags
+import UnitIds
+
+import Construction
+import Players
+import PlayerUnits
+import Spawns
+
+constant remainingUnits = new LinkedList<string>()
+
+init
+    CreateTrigger()..registerAnyUnitEvent(EVENT_PLAYER_UNIT_DEATH)..addCondition(Condition(() -> begin
+        let tu = GetTriggerUnit()
+        if wavePlayers.has(tu.getOwner())
+            var playerCount = 0
+            for i = 0 to 3
+                if players[i].isIngame()
+                    playerCount += 1
+
+            let bounty = max(((tu.getMaxHP() / 25.) / playerCount).toInt(), 1)
+            createGoldBountyTextTag(tu, bounty, localPlayer)
+            for i = 0 to 3
+                players[i].addGold(bounty)
+                players[i].addLumber(bounty)
+
+
+            for u in heroTowers
+                if u.getPos().distanceToSq(tu.getPos()) < 1200 * 1200
+                    AddHeroXP(u, bounty * 2, true)
+
+            doAfter(1.) ->
+                tu.remove()
+
+            if not lockForWinning
+                var totalFoodUsage = 0
+                for player_ in wavePlayers
+                    totalFoodUsage += player_.getState(PLAYER_STATE_RESOURCE_FOOD_USED)
+
+                if totalFoodUsage < 5
+                    remainingUnits.clear()
+                    for player_ in wavePlayers
+                        forUnitsOfPlayer(player_) (unit u) ->
+                            if u.getTypeId() != UnitIds.kael and u.getTypeId() != ID_REFEREE and u.isAlive()
+                                remainingUnits.add(u.getName())
+
+                    if remainingUnits.isEmpty()
+                        print("GG".color(COLOR_GOLD), 60.)
+
+                        doAfter(60.) ->
+                            for i = 0 to 4
+                                RemovePlayer(players[i], PLAYER_GAME_RESULT_VICTORY)
+                            EndGame(true)
+
+                        forUnitsInRect(bj_mapInitialPlayableArea) (unit u) ->
+                            u..pause()..setTimeScale(0.)
+
+                    else if remainingUnits.size() < 6
+                        print("Just " + remainingUnits.joinBy(", ") + " left!")
+
+        return false
+    end))

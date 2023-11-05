@@ -1,0 +1,47 @@
+package SellTower
+
+import Abilities
+import ClosureEvents
+import SoundUtils
+import StandardTextTags
+
+import PlayerUnits
+
+
+constant goldSound = new SoundDefinition(Sounds.alchemistTransmuteDeath1)
+
+
+function sellTower(unit which)
+    let valueG = which.getGoldCost() * 0.8
+    let valueW = which.getWoodCost() * 0.8
+    goldSound.playOnPoint(which.getPos3Real())
+    addEffect(Abilities.resourceEffectTarget, which.getPos())
+    which.getOwner()..addGold(valueG.toInt())..addLumber(valueW.toInt())
+
+    if valueG > 0
+        createGoldBountyTextTag(which, valueG.toInt(), which.getOwner())
+    if valueW > 0
+        createLumberBountyTextTag(which, valueW.toInt(), which.getOwner())..setPos(which.getPos3with(0.) - vec3(16., 32., 0.))
+
+    which.remove()
+
+init
+    EventListener.onCast(ID_SELL_TOWER_HUMAN) _ ->
+        let caster = EventData.getTriggerUnit()
+        sellTower(caster)
+
+    EventListener.onCast(ID_SELL_TOWER_ORC) _ ->
+        let caster = EventData.getTriggerUnit()
+        sellTower(caster)
+
+    EventListener.onCast(ID_SELL_TOWER_UNDEAD) _ ->
+        let caster = EventData.getTriggerUnit()
+        sellTower(caster)
+
+    EventListener.onCast(ID_SELL_TOWER_NIGHT_ELF) _ ->
+        let caster = EventData.getTriggerUnit()
+        sellTower(caster)
+
+    EventListener.onCast(ID_SELL_TOWER_ANYONE) _ ->
+        let caster = EventData.getTriggerUnit()
+        sellTower(caster)
