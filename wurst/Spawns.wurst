@@ -89,7 +89,7 @@ function startSpawning()
     ClearTextMessages()
     print("Warcraft 3 TD".color(COLOR_GOLD))
     let board = new Board("Warcraft 3 TD", 0.25)
-    board.columns(asList(new BoardColumn("Rounds left", 0.35), new BoardColumn("Current round", 0.45), new BoardColumn("Info", 0.2)))
+    board.columns(asList(new BoardColumn("Rounds left", 0.3), new BoardColumn("Current round", 0.5), new BoardColumn("Info", 0.2)))
     let approxTotalRounds = 573
     let roundsLeft = dynamicCell<int>(approxTotalRounds, i -> i.toString())
     let currentRound = dynamicCell<string>("", i -> i)

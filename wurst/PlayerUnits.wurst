@@ -373,8 +373,8 @@ class SellAbility extends AbilityDefinitionRoar
     ..setInt("ua1b", 48)
     ..setInt("ua1d", 3)
     ..setString("uubs", "HSMA")
-    ..setString("uabs", commaList(AbilityIds.abolishMagic, AbilityIds.spellImmunity2, AbilityIds.slowPoison, ID_SELL_TOWER_NIGHT_ELF))
-    ..setString("uabi", commaList(AbilityIds.abolishMagic, AbilityIds.spellImmunity2, AbilityIds.slowPoison, ID_SELL_TOWER_NIGHT_ELF))
+    ..setString("uabs", commaList(AbilityIds.spellImmunity2, AbilityIds.slowPoison, ID_SELL_TOWER_NIGHT_ELF))
+    ..setString("uabi", commaList(AbilityIds.spellImmunity2, AbilityIds.slowPoison, ID_SELL_TOWER_NIGHT_ELF))
 
 
 @compiletime function create_custom_crypt_fiend()
