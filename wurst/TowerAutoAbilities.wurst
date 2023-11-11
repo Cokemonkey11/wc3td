@@ -1,8 +1,12 @@
 package TowerAutoAbilities
 
 import DamageEvent
+import HashMap
+import StandardTextTags
 
 import PlayerUnits
+
+constant dragonIncinerateHashmap = new HashMap<unit, int>()
 
 
 init
@@ -13,6 +17,13 @@ init
                 let dt = DamageEvent.getTarget()
                 if ds.getTypeId() == ID_SORCERESS
                     ds.issueTargetOrder("sloW", dt)
+                else if ds.getTypeId() == ID_DRAGON
+                    let dm = DamageEvent.getAmount()
+                    let bonus = (dragonIncinerateHashmap.has(dt) ? dragonIncinerateHashmap.get(dt) : 0) + 10
+                    dragonIncinerateHashmap.put(dt, bonus)
+                    DamageEvent.setNextDamageFromCode()
+                    ds.damageTarget(dt, bonus.toReal())
+                    createCriticalStrikeTextTag(dt, dm.toInt() + bonus)
 
             case SPELL
                 skip

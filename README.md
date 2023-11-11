@@ -1,9 +1,8 @@
 # TODO
 
-42. line of sight blockers can be destroyed -- or maybe towers just see over them?
-44. tech tree needs more to be more fun
+42. x line of sight blockers can be destroyed -- or maybe towers just see over them?
+44. x tech tree needs more to be more fun
 62. player reported that during pre-loading, too laggy to play
-63. x dark minions are blocking
 65. x charmed units dont have flying
 66. x banished units seem to start moving before the end of banish
 67. game is too easy after the first hard flying round
@@ -23,3 +22,6 @@
 71. silence is not useful
 72. voodoo lounge is lame sauce
 73. just phoenix left!
+74. frost armor is not useful
+75. dark ritual is not useful
+76. after being hit by hex, creeps attack

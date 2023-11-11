@@ -1,5 +1,6 @@
 package PlayerUnits
 
+import Abilities
 import AbilityObjEditing
 import HashMap
 import Icons
@@ -18,6 +19,10 @@ public constant ID_SELL_TOWER_ORC = 'Ax03'
 public constant ID_SELL_TOWER_UNDEAD = 'Ax04'
 public constant ID_SELL_TOWER_NIGHT_ELF = 'Ax05'
 public constant ID_SELL_TOWER_ANYONE = 'Ax06'
+public constant ID_BASH = 'Ax07'
+// Ax08 is not used anymore.
+public constant ID_FROST_ATTACK = 'Ax09'
+public constant ID_CORROSIVE_BREATH = 'Ax0a'
 
 
 // w3u
@@ -34,6 +39,7 @@ public constant ID_SORCERESS = 'hx08'
 public constant ID_ALTAR_OF_KINGS = 'hx09'
 public constant ID_WORKER = 'hx0a'
 public constant ID_ARCANE_VAULT = 'hx0b'
+public constant ID_GRYPHON_RIDER = 'hx0c'
 
 public constant ID_ARCHMAGE_DUMMY = 'hxx0'
 public constant ID_BLOOD_MAGE_DUMMY = 'hxx1'
@@ -49,6 +55,7 @@ public constant ID_SHAMAN = 'ox05'
 public constant ID_ALTAR_OF_STORMS = 'ox06'
 public constant ID_ENGINEER_GAZLOWE = 'ox07'
 public constant ID_VOODOO_LOUNGE = 'ox08'
+public constant ID_DRAGON = 'ox09'
 
 public constant ID_FAR_SEER_DUMMY = 'oxx0'
 public constant ID_SHADOW_HUNTER_DUMMY = 'oxx1'
@@ -66,6 +73,7 @@ public constant ID_BANSHEE = 'ux07'
 public constant ID_ALTAR_OF_DARKNESS = 'ux08'
 public constant ID_ZOMBIE = 'ux09'
 public constant ID_TOMB_OF_RELICS = 'ux0a'
+public constant ID_FROST_WYRM = 'ux0b'
 
 public constant ID_LICH_DUMMY = 'uxx0'
 public constant ID_DARK_RANGER_DUMMY = 'uxx1'
@@ -81,6 +89,7 @@ public constant ID_HUNTRESS = 'ex05'
 public constant ID_ALTAR_OF_ELDERS = 'ex06'
 public constant ID_TREANT = 'ex07'
 public constant ID_ANCIENT_OF_WONDERS = 'ex08'
+public constant ID_CHIMAERA = 'ex09'
 
 public constant ID_PRIESTESS_OF_THE_MOON_DUMMY = 'exx0'
 public constant ID_KEEPER_OF_THE_GROVE_DUMMY = 'exx1'
@@ -268,70 +277,71 @@ class SellAbility extends AbilityDefinitionRoar
 @compiletime function create_custom_peasant()
     createObjectDefinition("w3u", ID_PEASANT, 'hpea')
     ..setInt("ufoo", 0)
-    ..setString("uabi", "Ahrp")
-    ..setString("ubui", commaList(ID_BARRACKS_HUMAN, ID_SCOUT_TOWER, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_ARCANE_VAULT))
+    ..setString("ubui", commaList(ID_BARRACKS_HUMAN, ID_SCOUT_TOWER, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_ARCANE_VAULT, ID_GRYPHON_RIDER))
     ..setUnreal("ucol", 0.1)
-    ..setString("uabs", "Ahrp")
+    ..setString("uabi", commaList(AbilityIds.repairHuman, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.repairHuman, AbilityIds.ghostVisible))
     ..setInt("usid", 50000)
-    ..setString("umvt", "fly")
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_peon()
     createObjectDefinition("w3u", ID_PEON, 'opeo')
     ..setInt("ufoo", 0)
-    ..setString("uabi", "Arep")
-    ..setString("ubui", commaList(ID_BARRACKS_ORC, ID_WATCH_TOWER, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_VOODOO_LOUNGE))
+    ..setString("ubui", commaList(ID_BARRACKS_ORC, ID_WATCH_TOWER, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_VOODOO_LOUNGE, ID_DRAGON))
     ..setUnreal("ucol", 0.1)
-    ..setString("uabs", "Arep")
+    ..setString("uabi", commaList(AbilityIds.repair, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.repair, AbilityIds.ghostVisible))
     ..setInt("usid", 50000)
-    ..setString("umvt", "fly")
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_acolyte()
     createObjectDefinition("w3u", ID_ACOLYTE, 'uaco')
     ..setInt("ufoo", 0)
-    ..setString("uabi", commaList(AbilityIds.restore))
-    ..setString("ubui", commaList(ID_ZIGGURAT, ID_CRYPT, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_TOMB_OF_RELICS))
+    ..setString("uabi", commaList(AbilityIds.restore, AbilityIds.ghostVisible))
+    ..setString("uabi", commaList(AbilityIds.restore, AbilityIds.ghostVisible))
+    ..setString("ubui", commaList(ID_ZIGGURAT, ID_CRYPT, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_TOMB_OF_RELICS, ID_FROST_WYRM))
     ..setUnreal("ucol", 0.1)
     ..setInt("usid", 50000)
-    ..setString("umvt", "fly")
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_wisp()
     createObjectDefinition("w3u", ID_WISP, 'ewsp')
     ..setInt("ufoo", 0)
-    ..setString("ubui", commaList(ID_ANCIENT_OF_WAR, ID_ANCIENT_PROTECTOR, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_ANCIENT_OF_WONDERS))
+    ..setString("ubui", commaList(ID_ANCIENT_OF_WAR, ID_ANCIENT_PROTECTOR, ID_SKY_FURY_TOWER, ID_SHACKLE_TOWER, ID_ANCIENT_OF_WONDERS, ID_CHIMAERA))
     ..setUnreal("ucol", 0.1)
     ..setInt("usid", 50000)
-    ..setString("umvt", "fly")
-    ..setString("uabi", commaList(AbilityIds.renew))
-    ..setString("uabs", commaList(AbilityIds.renew))
+    ..setString("umvt", "hover")
+    ..setString("uabi", commaList(AbilityIds.renew, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.renew, AbilityIds.ghostVisible))
 
 
 @compiletime function create_custom_militia()
     createObjectDefinition("w3u", ID_MILITIA, 'hmil')
     ..setInt("ufoo", 0)
-    ..setString("uabi", "Ahrp")
+    ..setString("uabi", commaList(AbilityIds.repairHuman, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.repairHuman, AbilityIds.ghostVisible))
     ..setString("ubui", commaList(ID_ALTAR_OF_KINGS, ID_SORCERESS, ID_RIFLEMAN))
     ..setString("upgr", "")
     ..setString("utyp", "peon")
     ..setUnreal("ucol", 0.1)
-    ..setString("uabs", "Ahrp")
     ..setString("utip", "Train Militia")
     ..setString("utub", "Ohhhh shit it's militia")
-    ..setString("umvt", "fly")
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_fel_peon()
     createObjectDefinition("w3u", ID_FEL_PEON, 'ncpn')
-    ..setString("uabi", "Arep")
     ..setString("ubui", commaList(ID_ALTAR_OF_STORMS, ID_SHAMAN, ID_HEADHUNTER))
     ..setString("upgr", "")
     ..setInt("ufoo", 0)
     ..setUnreal("ucol", 0.1)
-    ..setString("uabs", "Arep")
+    ..setString("uabi", commaList(AbilityIds.repair, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.repair, AbilityIds.ghostVisible))
     ..setString("utub", "Basic worker unit. Builds unit-tier towers.")
-    ..setString("umvt", "fly")
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_ghoul()
@@ -341,9 +351,9 @@ class SellAbility extends AbilityDefinitionRoar
     ..setString("ubui", commaList(ID_ALTAR_OF_DARKNESS, ID_BANSHEE, ID_CRYPT_FIEND))
     ..setString("utyp", "undead,peon")
     ..setUnreal("ucol", 0.1)
-    ..setString("uabs", "")
-    ..setString("umvt", "fly")
-    ..setString("uabi", commaList(AbilityIds.restore))
+    ..setString("umvt", "hover")
+    ..setString("uabi", commaList(AbilityIds.restore, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.restore, AbilityIds.ghostVisible))
 
 
 @compiletime function create_custom_night_elf_runner()
@@ -355,9 +365,9 @@ class SellAbility extends AbilityDefinitionRoar
     ..setUnreal("ucol", 0.1)
     ..setString("utip", "Train Night Elf Runner")
     ..setString("utub", "Can build unit-tier Night Elf towers.")
-    ..setString("umvt", "fly")
-    ..setString("uabi", commaList(AbilityIds.renew))
-    ..setString("uabs", commaList(AbilityIds.renew))
+    ..setString("umvt", "hover")
+    ..setString("uabi", commaList(AbilityIds.renew, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.renew, AbilityIds.ghostVisible))
 
 
 @compiletime function create_custom_dryad()
@@ -542,23 +552,23 @@ class SellAbility extends AbilityDefinitionRoar
     ..setString("ubui", commaList(ID_ARCHMAGE_DUMMY, ID_BLOOD_MAGE_DUMMY))
     ..setString("upgr", "")
     ..setInt("ufoo", 0)
-    ..setString("uabi", "Ahrp")
     ..setUnreal("ucol", 0.1)
-    ..setString("uabs", "Ahrp")
-    ..setString("umvt", "fly")
+    ..setString("uabs", commaList(AbilityIds.repairHuman, AbilityIds.ghostVisible))
+    ..setString("uabi", commaList(AbilityIds.repairHuman, AbilityIds.ghostVisible))
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_engineer_gazlowe()
     createObjectDefinition("w3u", ID_ENGINEER_GAZLOWE, 'negz')
-    ..setString("uabi", "")
     ..setInt("ufoo", 0)
     ..setString("utyp", "peon")
     ..setString("ubui", commaList(ID_FAR_SEER_DUMMY, ID_SHADOW_HUNTER_DUMMY))
     ..setUnreal("ucol", 0.1)
     ..setString("utip", "Train Engineer Gazlowe")
     ..setString("utub", "Supadupa builder")
-    ..setString("uabs", "")
-    ..setString("umvt", "fly")
+    ..setString("uabs", commaList(AbilityIds.repair, AbilityIds.ghostVisible))
+    ..setString("uabi", commaList(AbilityIds.repair, AbilityIds.ghostVisible))
+    ..setString("umvt", "hover")
 
 
 @compiletime function create_custom_zombie()
@@ -568,8 +578,9 @@ class SellAbility extends AbilityDefinitionRoar
     ..setString("utyp", "undead,peon")
     ..setUnreal("ucol", 0.1)
     ..setString("utub", "Builds stuff actually")
-    ..setString("umvt", "fly")
-    ..setString("uabi", commaList(AbilityIds.restore))
+    ..setString("umvt", "hover")
+    ..setString("uabi", commaList(AbilityIds.restore, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.restore, AbilityIds.ghostVisible))
 
 
 @compiletime function create_custom_treant()
@@ -582,9 +593,9 @@ class SellAbility extends AbilityDefinitionRoar
     ..setInt("ulum", 1)
     ..setString("utip", "Train Trent the Treant")
     ..setString("utub", "Builds like the dickens")
-    ..setString("umvt", "fly")
-    ..setString("uabi", commaList(AbilityIds.renew))
-    ..setString("uabs", commaList(AbilityIds.renew))
+    ..setString("umvt", "hover")
+    ..setString("uabi", commaList(AbilityIds.renew, AbilityIds.ghostVisible))
+    ..setString("uabs", commaList(AbilityIds.renew, AbilityIds.ghostVisible))
 
 
 // Referee
@@ -836,3 +847,96 @@ class CustomHeroDummy extends BuildingDefinition
     ..setString("upat", "PathTextures\\6x6SimpleSolid.tga")
     ..setReal("usca", 0.75)
     ..setString("umki", commaList(ItemIds.lesserClarityPotion, ItemIds.potionofMana, ItemIds.orbofVenom))
+
+
+// Custom towers
+
+class CustomTower extends BuildingDefinition
+    construct(int id)
+        super(id, UnitIds.watchtower)
+        setGoldCost(1000)
+        setRequirements(commaList(ID_AT_LEAST_ONE_HERO))
+        setElevationSamplePoints(0)
+
+@compiletime function create_custom_towers()
+    new AbilityDefinitionBashcreep(ID_BASH)
+        ..setName("Bash")
+        ..setTooltipNormal(1, "Bash")
+        ..setTooltipNormalExtended(1, "Gives a 100% chance to stun the target for 5 seconds.")
+        ..setChancetoBash(1, 100.)
+        ..setDurationHero(1, 5.)
+        ..setDurationNormal(1, 5.)
+
+    new AbilityDefinition(ID_FROST_ATTACK, 'Afrc', 1)  // No tooltip.
+        ..setDurationHero(1, 120.)
+        ..setDurationNormal(1, 120.)
+
+    new AbilityDefinitionOrbofCorruption(ID_CORROSIVE_BREATH)
+        ..setArmorPenalty(1, 5)
+        ..setEnabledAttackIndex(1, 1)
+        ..setDamageBonusDice(1, 0)
+        ..setItemAbility(true)
+        ..setMissileArt(Abilities.chimaeraAcidMissile)
+        ..setArtSpecial("")
+        ..setArtTarget("")
+
+    new CustomTower(ID_GRYPHON_RIDER)
+        ..setNormalAbilities(commaList(ID_BASH))
+        ..setName("Gryphon Rider")
+        ..setModelFile(Units.gryphonRider1)
+        ..setAttack1ProjectileArt(Abilities.gryphonRiderMissile)
+        ..setIconGameInterface(Icons.bTNGryphonRider)
+        ..setTooltipBasic("Build Gryphon Rider Tower")
+        ..setTooltipExtended("Has the bash ability")
+        ..setMovementHeight(100.)
+        ..setMovementHeightMinimum(100.)
+
+    new CustomTower(ID_DRAGON)
+        ..setNormalAbilities("")
+        ..setName("Dragon")
+        ..setModelFile(Units.redDragon1)
+        ..setAttack1ProjectileArt(Abilities.redDragonMissile)
+        ..setIconGameInterface(Icons.bTNRedDragon)
+        ..setTooltipBasic("Build Dragon Tower")
+        ..setTooltipExtended("Has the incinerate ability")
+        ..setMovementHeight(100.)
+        ..setMovementHeightMinimum(100.)
+
+    new CustomTower(ID_FROST_WYRM)
+        ..setNormalAbilities(commaList(ID_FROST_ATTACK))
+        ..setName("Frost Wyrm")
+        ..setModelFile(Units.frostWyrm1)
+        ..setAttack1ProjectileArt(Abilities.frostWyrmMissile)
+        ..setIconGameInterface(Icons.bTNFrostWyrm)
+        ..setTooltipBasic("Build Frost Wyrm Tower")
+        ..setTooltipExtended("Has the frost breath ability")
+        ..setMovementHeight(100.)
+        ..setMovementHeightMinimum(100.)
+        ..setAttack1DamageBase(90)
+        ..setAttack1CooldownTime(1.8)
+        ..setAttack1AnimationBackswingPoint(0.55)
+        ..setAttack1AnimationDamagePoint(0.5)
+        ..setAttack1AreaofEffectFullDamage(25)
+        ..setAttack1AreaofEffectMediumDamage(50)
+        ..setAttack1AreaofEffectSmallDamage(200)
+        ..setAttack1AttackType(AttackType.Magic)
+        ..setAttack1AreaofEffectTargets("ground,air,structure,debris,enemy")
+        ..setAttack1DamageFactorMedium(.2)
+        ..setAttack1DamageFactorSmall(0.1)
+        ..setAttack1ProjectileArc(0.1)
+        ..setAttack1ProjectileHomingEnabled(true)
+        ..setAttack1RangeMotionBuffer(200)
+        ..setAttack1ShowUI(true)
+        ..setAttack1TargetsAllowed("ground,air,structure,debris,item,ward")
+        ..setAttack1WeaponType(WeaponType.MissileSplash)
+
+    new CustomTower(ID_CHIMAERA)
+        ..setNormalAbilities(commaList(ID_CORROSIVE_BREATH))
+        ..setName("Chimaera")
+        ..setModelFile(Units.chimaera)
+        ..setAttack1ProjectileArt(Abilities.chimaeraAcidMissile)
+        ..setIconGameInterface(Icons.bTNChimaera)
+        ..setTooltipBasic("Build Chimaera Tower")
+        ..setTooltipExtended("Has the corrosive breath ability")
+        ..setMovementHeight(100.)
+        ..setMovementHeightMinimum(100.)
