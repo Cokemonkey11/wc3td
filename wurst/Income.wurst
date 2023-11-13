@@ -13,6 +13,44 @@ import Spawns
 
 constant remainingUnits = new LinkedList<string>()
 
+
+function get_bounty(int unit_max_hp, int player_count) returns int
+    // Old algorithm
+    // return max(((unit_max_hp / 25) / player_count).toInt(), 1)
+
+
+    // v2 algorithm, requires log
+    // let shift_value = 14  // Shift to start the scale lower
+    // let stretch_factor = 5  // Stretch the logarithm for a gradual increase
+    // let log_base = 10
+
+    // let scaled_hp = math.log((unit_max_hp - shift_value) / stretch_factor + 1, log_base)
+
+    // max_bounty = 50
+    // min_bounty = 1
+    // scale_factor = (max_bounty - min_bounty) / math.log(2280 + 1, log_base)
+
+    // // Calculate the bounty and adjust for player count
+    // bounty = max(int(scaled_hp * scale_factor / player_count), min_bounty)
+    // return bounty
+
+
+    // V3 algorithm, uses sqrt
+    let shift_value = 14
+    let max_bounty = 50
+    let min_bounty = 1
+
+    let adjusted_input = max(unit_max_hp - shift_value, 0).toReal()
+    let scaled_hp = SquareRoot(adjusted_input)
+
+    // Adjust the scale factor based on the new shift value
+    let scale_factor = (max_bounty - min_bounty) / SquareRoot(2280. - shift_value)
+
+    // Calculate the bounty and ensure it's at least the minimum bounty
+    return max((scaled_hp * scale_factor / player_count).toInt(), min_bounty)
+
+
+
 init
     CreateTrigger()..registerAnyUnitEvent(EVENT_PLAYER_UNIT_DEATH)..addCondition(Condition(() -> begin
         let tu = GetTriggerUnit()
@@ -22,7 +60,9 @@ init
                 if players[i].isIngame()
                     playerCount += 1
 
-            let bounty = max(((tu.getMaxHP() / 25.) / playerCount).toInt(), 1)
+            // Desired HP: 4, 8, ..., 2280
+            // hp / 25 = 1, ..., 91
+            let bounty = get_bounty(tu.getMaxHP().toInt(), playerCount)
             createGoldBountyTextTag(tu, bounty, localPlayer)
             for i = 0 to 3
                 players[i].addGold(bounty)

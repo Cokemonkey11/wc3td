@@ -23,54 +23,49 @@ constant unitDefenseTypes = new HashMap<int, int>()
 constant unitMovementTypes = new HashMap<int, int>()
 public var lockForWinning = true
 
+constant SAFE_SPOT = vec2(-6660., 6660.)
+
 
 function spawnCandidate() returns unit
-    while not moddedUnits.isEmpty()
-        let newTypeId = moddedUnits.pop()
-        let sample = createUnit(players[23], newTypeId)
+    let newTypeId = moddedUnits.pop()
+    let sample = createUnit(players[23], newTypeId, SAFE_SPOT)
 
-        if (
-            sample.isType(UNIT_TYPE_STRUCTURE)
-            or sample.getMoveSpeed() < 1
-            or sample.hasAbility(AbilityIds.permanentInvisibility)
-            or sample.isInvulnerable()
-            or sample.isType(UNIT_TYPE_ETHEREAL)
-            or BlzGetUnitIntegerField(sample, UNIT_IF_MOVE_TYPE) == 16 // MOVE_TYPE_FLOAT
-        )
-            sample.remove()
-        else
-            return sample
-    return null
+    if (
+        sample.isType(UNIT_TYPE_STRUCTURE)
+        or sample.getMoveSpeed() < 1
+        or sample.hasAbility(AbilityIds.permanentInvisibility)
+        or sample.isInvulnerable()
+        or sample.isType(UNIT_TYPE_ETHEREAL)
+        or BlzGetUnitIntegerField(sample, UNIT_IF_MOVE_TYPE) == 16 // MOVE_TYPE_FLOAT
+    )
+        sample.remove()
+        return null
+
+    return sample
 
 
 public function preSpawn()
     let total = moddedUnits.size()
     doPeriodically(1. / 10.) (CallbackPeriodic cb) ->
-        var wasNull = false
-        for _ = 0 to 5
+        if not moddedUnits.isEmpty()
             let u = spawnCandidate()
 
-            if u == null
-                wasNull = true
-                break
+            if u != null
+                let typ = u.getTypeId()
 
-            let typ = u.getTypeId()
-
-            if units.has(typ)
-                u.remove()
-            else
-                units.add(typ)
-                unitHps.put(typ, u.getHP().toInt())
-                unitNames.put(typ, u.getName())
-                unitDefenseTypes.put(typ, BlzGetUnitIntegerField(u, UNIT_IF_DEFENSE_TYPE))
-                unitMovementTypes.put(typ, BlzGetUnitIntegerField(u, UNIT_IF_MOVE_TYPE))
-                u.remove()
-                ClearTextMessages()
-                let progress = (total - moddedUnits.size()) / total
-                print("Preloading... " + (100 * progress).toInt().toString() + "%")
-                break
-
-        if wasNull
+                if units.has(typ)
+                    u.remove()
+                else
+                    units.add(typ)
+                    unitHps.put(typ, u.getHP().toInt())
+                    unitNames.put(typ, u.getName())
+                    unitDefenseTypes.put(typ, BlzGetUnitIntegerField(u, UNIT_IF_DEFENSE_TYPE))
+                    unitMovementTypes.put(typ, BlzGetUnitIntegerField(u, UNIT_IF_MOVE_TYPE))
+                    u.remove()
+                    ClearTextMessages()
+                    let progress = (total - moddedUnits.size()) / total
+                    print("Preloading... " + (100 * progress).toInt().toString() + "%")
+        else
             destroy cb
             new RealHeapGuard<int>() guard ->
                 for u in units
@@ -78,7 +73,7 @@ public function preSpawn()
 
                 while true
                     let res = guard.pop()
-                    if not res == 0
+                    if res != 0
                         unitsToSpawn.addtoStart(res)
                     else
                         break
@@ -101,6 +96,8 @@ function startSpawning()
         ..issuePointOrder("move", vec2(0., -1790.))
         ..setVertexColor(colorA(0, 0, 0, 100))
         ..addAbility(AbilityIds.invulnerable)
+
+    PingMinimap(players[23].getStartLocation().x, players[23].getStartLocation().y, 10.)
 
     doPeriodically(4.) (CallbackPeriodic cb) ->
         if not unitsToSpawn.isEmpty()

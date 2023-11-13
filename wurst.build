@@ -4,6 +4,6 @@ dependencies:
 - https://github.com/wurstscript/wurstStdlib2
 - https://github.com/Cokemonkey11/WurstRealHeapGuard
 buildMapData:
-  name: Warcraft 3 TD 0.1.6
-  fileName: (4)warcraft3td.0.1.6
+  name: Warcraft 3 TD 0.1.9
+  fileName: (4)warcraft3td.0.1.9
   author: Cokemonkey11

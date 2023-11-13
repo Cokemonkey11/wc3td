@@ -15,7 +15,7 @@ function sellTower(unit which)
     let valueG = which.getGoldCost() * 0.8
     let valueW = which.getWoodCost() * 0.8
     goldSound.playOnPoint(which.getPos3Real())
-    addEffect(Abilities.resourceEffectTarget, which.getPos())
+    flashEffect(Abilities.resourceEffectTarget, which.getPos(), 3.)
     which.getOwner()..addGold(valueG.toInt())..addLumber(valueW.toInt())
 
     if valueG > 0

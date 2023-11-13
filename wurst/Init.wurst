@@ -1,7 +1,9 @@
 package Init
 
+import AbilityIds
 import ClosureTimers
 import HashMap
+import StandardTextTags
 
 import PlayerUnits
 import Spawns
@@ -32,3 +34,52 @@ init
                 atMostOneHeroes.put(i, createUnit(players[i], ID_AT_MOST_ONE_HERO))
                 players[i].setGold(800)
                 players[i].setLumber(800)
+
+    doAfter(4.) ->
+        let footmanPos = vec2(0., -3080.)
+        let footmanTargetPos = vec2(0., -1800.)
+        let footman = createUnit(players[PLAYER_NEUTRAL_PASSIVE], 'hfoo', footmanPos)
+            ..addAbility(AbilityIds.locust)
+            ..issuePointOrder("move", footmanTargetPos)
+            ..setVertexColor(colorA(255, 255, 255, 125))
+
+        let youLoseHere = standardTextTag(footmanTargetPos - vec2(200., 0.), "You lose if they get here ;(")
+            ..setPermanent(true)
+            ..setFadepoint(99.)
+            ..setLifespan(99.)
+            ..setVelocity(ZERO2)
+
+        let theySpawnHere = standardTextTag(vec2(-250., -7170.), "They spawn here... don't build too close tho O.O")
+            ..setPermanent(true)
+            ..setFadepoint(99.)
+            ..setLifespan(99.)
+            ..setVelocity(ZERO2)
+
+        doPeriodicallyTimed(2., 60.) (CallbackCounted cb) ->
+            footman..setXY(footmanPos)..issuePointOrder("move", footmanTargetPos)
+            let tt = standardTextTag(footmanPos - vec2(160., 0.), "Creeps be going this way")
+                ..setPermanent(false)
+                ..setFadepoint(2.)
+                ..setLifespan(2.)
+                ..setVelocity(vec2(0., 200. / 1000.))
+
+            if cb.isLast()
+                footman.remove()
+                tt.destr()
+
+        doPeriodicallyTimed(ANIMATION_PERIOD, 60.) (CallbackCounted cb) ->
+            // Scale from 5x to 0.5x linaerly as the count moves from 0 to max
+            let invScale = cb.getCount()
+            let finalInvScale = 60. / ANIMATION_PERIOD
+            let invRatio = invScale / finalInvScale
+            let ratio = 1. - invRatio
+            youLoseHere.setScaledText("You lose if they get here ;(", 3. .lerp(.66, ratio))
+
+            let color1 = COLOR_WHITE
+            let color2 = COLOR_GOLD
+
+            theySpawnHere.setColor(GetRandomInt(0, 1) == 0 ? color1 : color2)
+
+            if cb.isLast()
+                youLoseHere.destr()
+                theySpawnHere.destr()

@@ -1,0 +1,28 @@
+package Look
+
+import Abilities
+import ClosureEvents
+import ClosureTimers
+import SoundUtils
+import StandardTextTags
+
+import PlayerUnits
+
+
+constant chatSound = new SoundDefinition(Sounds.inGameChatWhat1)
+
+
+init
+    EventListener.onCast(ID_LOOK) _ ->
+        let target = EventData.getSpellTargetPos()
+        chatSound.playOnPoint(target.withTerrainZ())
+        flashEffect(Abilities.monsoonBoltTarget, target, .5)
+
+        let l1 = AddLightning("CLSB", false, target.x - 50., target.y - 50., target.x + 50., target.y + 50.)
+        let l2 = AddLightning("CLSB", false, target.x - 50., target.y + 50., target.x + 50., target.y - 50.)
+
+        standardTextTag(target - vec2(200., 100.), "Yo mf check it out".color(COLOR_GOLD))
+
+        doAfter(5.) ->
+            l1.destr()
+            l2.destr()
