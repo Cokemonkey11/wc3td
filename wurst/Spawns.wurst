@@ -25,6 +25,10 @@ public var lockForWinning = true
 
 constant SAFE_SPOT = vec2(-6660., 6660.)
 
+public var hardMode = false
+
+public constant board = new Board("Warcraft 3 TD", 0.25)
+
 
 function spawnCandidate() returns unit
     let newTypeId = moddedUnits.pop()
@@ -83,7 +87,6 @@ public function preSpawn()
 function startSpawning()
     ClearTextMessages()
     print("Warcraft 3 TD".color(COLOR_GOLD))
-    let board = new Board("Warcraft 3 TD", 0.25)
     board.columns(asList(new BoardColumn("Rounds left", 0.3), new BoardColumn("Current round", 0.5), new BoardColumn("Info", 0.2)))
     let approxTotalRounds = 573
     let roundsLeft = dynamicCell<int>(approxTotalRounds, i -> i.toString())

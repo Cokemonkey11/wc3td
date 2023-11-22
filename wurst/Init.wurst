@@ -9,6 +9,7 @@ import PlayerUnits
 import Spawns
 
 public constant atMostOneHeroes = new HashMap<int, unit>()
+public constant atMostOneHardModes = new HashMap<int, unit>()
 
 init
     nullTimer() ->
@@ -32,6 +33,7 @@ init
                 )
                 createUnit(players[i], typ, players[i].getStartLocation() - vec2(0, 32. * i), 270 .asAngleDegrees())
                 atMostOneHeroes.put(i, createUnit(players[i], ID_AT_MOST_ONE_HERO))
+                atMostOneHardModes.put(i, createUnit(players[i], ID_ONLY_ONE_HARD_MODE))
                 players[i].setGold(800)
                 players[i].setLumber(800)
 

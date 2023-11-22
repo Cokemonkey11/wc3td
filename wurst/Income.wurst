@@ -36,8 +36,57 @@ function get_bounty(int unit_max_hp, int player_count) returns int
 
 
     // V3 algorithm, uses sqrt
-    let shift_value = 14
-    let max_bounty = 50
+    //   15 ->  1
+    //   60 ->  6
+    //  240 -> 15
+    //  800 -> 28
+    // 2280 -> 49
+    // let shift_value = 14
+    // let max_bounty = 30
+    // let min_bounty = 1
+
+    // easy mode:
+    //   15 ->  1
+    //   60 ->  4
+    //  240 ->  9
+    //  800 -> 17
+    // 2280 -> 29
+
+    // hard mode:
+    //   15 ->  1
+    //   60 ->  4
+    //  240 -> 14
+    //  800 -> 28
+    // 2280 -> 49
+
+    // Python code for testing:
+    // from math import sqrt
+
+    // # Python function to calculate the bounty
+    // def calculate_bounty(unit_max_hp, shift_value, hardMode):
+    //     max_bounty = 30 if hardMode else 50
+    //     min_bounty = 1
+
+    //     adjusted_input = max(unit_max_hp - shift_value, 0)
+    //     scaled_hp = sqrt(adjusted_input)
+
+    //     scale_factor = (max_bounty - min_bounty) / sqrt(2280 - shift_value)
+
+    //     return max(int(scaled_hp * scale_factor), min_bounty)
+
+    // # Test the function with an initial guess for the shift_value
+    // # We aim to achieve the fixed points for the non-hard mode (easy mode)
+    // fixed_points = [15, 60, 240, 800, 2280]
+    // desired_bounties = [1, 5, 12, 25, 45]
+
+    // # Initial guess for the shift_value
+    // shift_value_guess = 14  # This can be adjusted
+
+    // # Evaluate the function at the fixed points with the initial guess for shift_value
+    // evaluated_bounties = [calculate_bounty(hp, shift_value_guess, False) for hp in fixed_points]
+    // evaluated_bounties
+    let shift_value = hardMode ? 14 : 40
+    let max_bounty = hardMode ? 30 : 50
     let min_bounty = 1
 
     let adjusted_input = max(unit_max_hp - shift_value, 0).toReal()
@@ -60,8 +109,6 @@ init
                 if players[i].isIngame()
                     playerCount += 1
 
-            // Desired HP: 4, 8, ..., 2280
-            // hp / 25 = 1, ..., 91
             let bounty = get_bounty(tu.getMaxHP().toInt(), playerCount)
             createGoldBountyTextTag(tu, bounty, localPlayer)
             for i = 0 to 3
@@ -81,11 +128,11 @@ init
                 for player_ in wavePlayers
                     totalFoodUsage += player_.getState(PLAYER_STATE_RESOURCE_FOOD_USED)
 
-                if totalFoodUsage < 5
+                if totalFoodUsage < 16
                     remainingUnits.clear()
                     for player_ in wavePlayers
                         forUnitsOfPlayer(player_) (unit u) ->
-                            if u.getTypeId() != UnitIds.kael and u.getTypeId() != ID_REFEREE and u.isAlive()
+                            if u.getTypeId() != UnitIds.kael and u.getTypeId() != ID_REFEREE and u.isAlive() and not u.isType(UNIT_TYPE_SUMMONED)
                                 remainingUnits.add(u.getName())
 
                     if remainingUnits.isEmpty()

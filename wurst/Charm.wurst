@@ -2,8 +2,11 @@ package Charm
 
 import AbilityIds
 import ClosureEvents
+import ClosureTimers
 
 
 init
     EventListener.onCast(AbilityIds.charm) _ ->
-        EventData.getSpellTargetUnit().setPathing(false)
+        let tu = EventData.getSpellTargetUnit()
+        doAfter(0.1) ->
+            tu..setPathing(false)

@@ -6,6 +6,8 @@ import HashMap
 
 import Init
 import PlayerUnits
+import SoundUtils
+import Spawns
 
 public constant heroTowers = CreateGroup()
 
@@ -14,11 +16,38 @@ constant reverseMap = new HashMap<unit, unit>()
 public constant atLeastOneHeroes = new HashMap<int, unit>()
 
 
+var hardModeUnitCounts = 0
+
+constant hardVoteSound = new SoundDefinition(Sounds.questLog)
+constant hardModeSound = new SoundDefinition(Sounds.warning)
+
+
 init
     CreateTrigger()..registerAnyUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START)..addCondition(Condition(() -> begin
         let tu = GetConstructingStructure()
         doAfter(0.01) ->
             UnitSetConstructionProgress(tu, 99)
+
+            // Hard mode votes
+            if tu.getTypeId() == ID_HARD_MODE
+                atMostOneHardModes.get(tu.getOwner().getId()).remove()
+                hardModeUnitCounts += 1
+
+                var playerCount = 0
+                for i = 0 to 4
+                    if players[i].isIngame()
+                        playerCount += 1
+
+                if hardModeUnitCounts >= playerCount
+                    hardMode = true
+                    hardModeSound.play()
+                    print("Hard mode activated.".color(COLOR_GOLD))
+                    board.getBoard().setTitle("WC3 TD ".color(COLOR_GOLD) + "::".color(COLOR_WHITE) + " HARD MODE".color(COLOR_GOLD))
+                else
+                    hardVoteSound.play()
+                    print(tu.getOwner().getName().color(COLOR_GOLD) + " is voting for hard mode.")
+
+            // Heroes
             if HERO_DUMMY_TO_HERO.has(tu.getTypeId())
                 atMostOneHeroes.get(tu.getOwner().getId()).remove()
                 if not atLeastOneHeroes.has(tu.getOwner().getId())
